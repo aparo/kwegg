@@ -1,4 +1,4 @@
-package com.paragarora.extractor;
+package com.kwegg.extractor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,13 +9,13 @@ import opennlp.tools.parser.Parse;
 import opennlp.tools.parser.Parser;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 
-import com.paragarora.commons.experio.BaseExperio;
-import com.paragarora.commons.experio.BaseSubject;
+import com.kwegg.commons.experio.BaseExperio;
+import com.kwegg.commons.experio.BaseSubject;
 
 public class BaseExperioExtractor {
 	private final SentenceDetectorME sdetector;
 	private final Parser parser;
-	private final String modelsDataDir = "/home/parag/work/nlp/opennlp/thirdparty/readwrite/models/";
+	private final String modelsDataDir = "/home/parag/work/kwegg/thirdparty/readwrite/models/";
 	
 	public BaseExperioExtractor() throws IOException {
 		sdetector = new SentenceDetector(modelsDataDir+"sentdetect/EnglishSD.bin.gz");
@@ -83,7 +83,7 @@ public class BaseExperioExtractor {
 		phrase = phrase+"BringIt is helping speed the rate at which players spend their money inside the virtual economy of the game, by sinking, or removing the currency from the game at a faster rate by getting players to spend their virtual money. That leads to users spending more real money on virtual currency, said Woody Levin, chief executive of BringIt in San Francisco.";
 		phrase = phrase+"Levin (pictured right) said 6 percent of users return to the Zoo Blast mini game every day, and 55 percent of users have played the game before.";
 
-		phrase = "ather lot of related market data for analysis Lets come back to analysis now assuming that above mentioned sort of advice will always be given an utmost importance. First part of every plan starts with market or industry analysis. Even if your idea or plan seems overwhelming enough for you to skip this thing, you should be very strict to yourself gathering negative data for you too to make you strong enough to fight against them when the right time comes. Read lot of related blog (I prefer Google Reader ) as others’ experience is always going to help you a lot. I would rather advice you to make an account over delicious and preserve all your bookmarks there so that you can share with me or even yourself later ";
+		//phrase = "Gather lot of related market data for analysis Lets come back to analysis now assuming that above mentioned sort of advice will always be given an utmost importance. First part of every plan starts with market or industry analysis. Even if your idea or plan seems overwhelming enough for you to skip this thing, you should be very strict to yourself gathering negative data for you too to make you strong enough to fight against them when the right time comes. Read lot of related blog (I prefer Google Reader ) as others’ experience is always going to help you a lot. I would rather advice you to make an account over delicious and preserve all your bookmarks there so that you can share with me or even yourself later ";
 		//String phrase = "Everybody knows that Google and Facebook are killing it in online display advertising.  Google recently announced that it is on track to generate <a href='http://techcrunch.com/2010/10/20/google-display-yaho/'>$2.5 billion</a> a year in display advertising revenues, and Facebook is doing about <a href='http://techcrunch.com/2010/09/01/facebook-will-hit-2-billion-2010-revenue-says-mob-of-unofficial-facebook-spokespersons/'>$2 billion</a>, mostly from display. ";
 		try {
 			BaseExperioExtractor bse = new BaseExperioExtractor();

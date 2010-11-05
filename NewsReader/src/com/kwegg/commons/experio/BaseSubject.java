@@ -1,4 +1,4 @@
-package com.paragarora.commons.experio;
+package com.kwegg.commons.experio;
 
 public class BaseSubject {
 	private String phrase;
