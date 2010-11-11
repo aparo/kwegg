@@ -4,16 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ReaderUtils {
-	
-	/**
-	 * DEFAULT will use java syndfeed (Project ROME)
-	 * @author parag
-	 *
-	 */
-	public static enum FeedFormat {
-		DEFAULT, RSS_1 ,RSS_2, ATOM
-	}
-
 	/**
 	 * Normalize a URL, by forcing its host name and protocol to lower case.
 	 * 

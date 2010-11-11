@@ -6,6 +6,7 @@
   lastModifiedTime
   lastCrawledTime
   format
+  isEnabled
 -NEWS
   id
   modifiedTime

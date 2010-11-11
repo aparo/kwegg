@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class SimpleTableHandler {
 	private Connection conn = null;
-	String userName = "user";
-    String password = "1234";
-    String url = "jdbc:mysql://localhost/sentitrader";
+	String userName = "kwegg";
+    String password = "Kwegg123";
+    String url = "jdbc:mysql://localhost/NEWS_READER";
     
     public SimpleTableHandler() {
     	try {

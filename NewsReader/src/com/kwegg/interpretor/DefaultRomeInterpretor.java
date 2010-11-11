@@ -5,8 +5,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.kwegg.commons.news.CloudNews;
 import com.kwegg.commons.news.FastFeed;
-import com.kwegg.commons.news.FastNews;
+import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
@@ -16,8 +17,8 @@ import com.sun.syndication.io.XmlReader;
 public class DefaultRomeInterpretor implements BaseInterpretor {
 
 	@Override
-	public List<FastNews> getAllFastNews(FastFeed feed) throws IOException {
-		List<FastNews> newsList = new LinkedList<FastNews>();
+	public List<CloudNews> getAllCloudNews(FastFeed feed) throws IOException {
+		List<CloudNews> newsList = new LinkedList<CloudNews>();
 		
 		SyndFeedInput syndFeedInput = new SyndFeedInput();
 		SyndFeed syndFeed = null;
@@ -31,11 +32,11 @@ public class DefaultRomeInterpretor implements BaseInterpretor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(syndFeed.getAuthor()+", "+syndFeed.getCopyright()+", "+syndFeed.getDescription());
-		System.out.println(syndFeed.getEncoding()+", "+syndFeed.getFeedType()+", "+syndFeed.getLanguage());
-		System.out.println(syndFeed.getLink()+", "+syndFeed.getTitle()+", "+syndFeed.getUri());
-		System.out.println(syndFeed.getCategories().toArray().toString()+", "+syndFeed.getPublishedDate());
-		feed.setLastCrawledTime(System.currentTimeMillis());
+		
+		if(syndFeed.getPublishedDate().getTime() < feed.getLastCrawledTime()) {
+			System.out.println("no need to crawl "+syndFeed.getTitle());
+		}
+			
 		
 		/*
 		 * generate list of news after last modified time
@@ -43,7 +44,38 @@ public class DefaultRomeInterpretor implements BaseInterpretor {
 		Iterator it = syndFeed.getEntries().iterator();
 		while(it.hasNext()) {
 			SyndEntry entry = (SyndEntry) it.next();
-			System.out.println(entry.getTitle()+": "+entry.getLink());
+			System.out.println("dumping "+entry.getTitle());
+			CloudNews news = new CloudNews();
+			if(entry.getAuthor()!=null)
+				news.setAuthor(entry.getAuthor());
+			if(entry.getUri()!=null)
+				news.setBaseUri(entry.getUri());
+			if(entry.getDescription()!=null)
+				news.setDescription(entry.getDescription().getValue());
+			if(entry.getContents()!=null) {
+				if(entry.getContents().size() > 0) {
+					SyndContent syndContent = (SyndContent)entry.getContents().get(0);
+					news.setContent(syndContent.getValue());
+				}
+				else {
+					news.setContent(entry.getDescription().getValue());
+				}
+			}
+			
+			news.setFeed_id(feed.getId());
+			news.setFeedLink(feed.getURL().toString());
+			if(entry.getUri()!=null)
+				news.setGuidValue(entry.getUri());
+			if(entry.getPublishedDate()!=null)
+				news.setPublishTime(entry.getPublishedDate().getTime());
+			if(entry.getTitle()!=null)
+				news.setTitle(entry.getTitle());
+			if(entry.getUpdatedDate()!=null)
+				news.setUpdatedTime(entry.getUpdatedDate().getTime());
+			newsList.add(news);
+			
+			feed.setLastCrawledTime(System.currentTimeMillis());
+			feed.setLastModifiedTime(syndFeed.getPublishedDate().getTime());
 		}
 		
 		/**

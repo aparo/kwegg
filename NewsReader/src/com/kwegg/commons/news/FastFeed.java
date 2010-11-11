@@ -1,29 +1,27 @@
 package com.kwegg.commons.news;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
 
+import com.kwegg.interpretor.BaseInterpretor;
+import com.kwegg.interpretor.DefaultRomeInterpretor;
+import com.kwegg.models.FeedTableHandler;
+import com.kwegg.models.NewsTableHandler;
 import com.kwegg.utils.ReaderUtils;
-import com.kwegg.utils.ReaderUtils.FeedFormat;
 
 public class FastFeed {
 	
 	public static final String DEFAULT_SAVE_AS_ENCODING = "utf-8";
+	private int id;
 	private final URL feedURL;
 	private long lastModifiedTime;
 	private long lastCrawledTime;
-	private FeedFormat format;
+	private boolean isEnabled = true;
+	private String name;
 	
 	public FastFeed(URL feedURL) {
 		this.feedURL = ReaderUtils.normalizeURL(feedURL);
-	}
-	
-	/**
-	 * Get the hash code for this feed
-	 * 
-	 * @return the hash code
-	 */
-	public int hashCode() {
-		return getURL().hashCode();
 	}
 
 	/**
@@ -43,6 +41,35 @@ public class FastFeed {
 			eq = this.feedURL.equals(((FastFeed) obj).feedURL);
 
 		return eq;
+	}
+	
+	public synchronized void dumpNews() {
+		System.out.println("dumping news for feed-id: "+id+", "+name);
+		BaseInterpretor bi = new DefaultRomeInterpretor();
+		try {
+			LinkedList<CloudNews> lcn = (LinkedList<CloudNews>) bi.getAllCloudNews(this);
+			for(CloudNews cn: lcn) {
+				try {
+					NewsTableHandler.getInstance().insertNews(cn);
+					System.out.println("news inserted");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			try {
+				FeedTableHandler.getInstance().updateFeed(this);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
@@ -69,13 +96,28 @@ public class FastFeed {
 		this.lastCrawledTime = lastCrawledTime;
 	}
 	
-	public FeedFormat getFeedFormat() {
-		return format;
+	public void enable() {
+		isEnabled = true;
 	}
-	public void setFeedFormat(FeedFormat format) {
-		this.format = format;
+	public void disable() {
+		isEnabled = false;
+	}
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 }
