@@ -9,6 +9,7 @@ import opennlp.tools.parser.Parse;
 import opennlp.tools.parser.Parser;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 
+import com.kwegg.common.utils.HtmlManipulator;
 import com.kwegg.commons.experio.BaseExperio;
 import com.kwegg.commons.experio.BaseSubject;
 
@@ -16,20 +17,34 @@ public class BaseExperioExtractor {
 	private final SentenceDetectorME sdetector;
 	private final Parser parser;
 	private final String modelsDataDir = "/home/parag/work/kwegg/thirdparty/readwrite/models/";
-	
-	public BaseExperioExtractor() throws IOException {
+	private static BaseExperioExtractor instance;
+	/**
+	 * should be singleton
+	 * @throws IOException
+	 */
+	private BaseExperioExtractor() throws IOException {
 		sdetector = new SentenceDetector(modelsDataDir+"sentdetect/EnglishSD.bin.gz");
 		parser = TreebankParser.getParser(modelsDataDir);
 	}
 	
-	public final BaseExperio[] extractExperios(String content) {
-		String[] phrases = sdetector.sentDetect(content);
+	public static BaseExperioExtractor getInstance() throws IOException {
+		if(null==instance) {
+			instance = new BaseExperioExtractor();
+		}
+		
+		return instance;
+	}
+	
+	public final BaseExperio[] extractExperios(String cont) {
+		cont.replaceAll("\n", "").replaceAll("\t", "");
+		String htmlEscaped = HtmlManipulator.textizeHtml(cont);
+		String[] phrases = sdetector.sentDetect(htmlEscaped);
 		BaseExperio[] be = new BaseExperio[phrases.length];
 		int bei = 0;
 		for(int i=0; i<phrases.length; i++) {
 			ArrayList<BaseSubject> subjs = new ArrayList<BaseSubject>();
-			Parse[] parses = TreebankParser.parseLine(new String(phrases[i].replaceAll("\\<.*?>","")), parser, 1);
-			parses[0].show();
+			Parse[] parses = TreebankParser.parseLine(new String(phrases[i]), parser, 1);
+			//parses[0].show();
 			handleParse(parses[0], subjs);
 			/**
 			 * arraylist to array
@@ -56,13 +71,15 @@ public class BaseExperioExtractor {
 					validSubject = true;
 					keywords.add(pa.toString());
 				}
+				// use his if we need to break CC
+				/*
 				if(pa.getType().equals("CC")) {
 					String[] splitted = phrase.split(pa.toString(), 2);
 					BaseSubject subject = new BaseSubject(splitted[0], keywords.toArray());
 					subjs.add(subject);
 					phrase = splitted[1];
 					keywords.clear();
-				}
+				}*/
 			}
 		}
 		if(validSubject) {
@@ -86,8 +103,7 @@ public class BaseExperioExtractor {
 		//phrase = "Gather lot of related market data for analysis Lets come back to analysis now assuming that above mentioned sort of advice will always be given an utmost importance. First part of every plan starts with market or industry analysis. Even if your idea or plan seems overwhelming enough for you to skip this thing, you should be very strict to yourself gathering negative data for you too to make you strong enough to fight against them when the right time comes. Read lot of related blog (I prefer Google Reader ) as others’ experience is always going to help you a lot. I would rather advice you to make an account over delicious and preserve all your bookmarks there so that you can share with me or even yourself later ";
 		//String phrase = "Everybody knows that Google and Facebook are killing it in online display advertising.  Google recently announced that it is on track to generate <a href='http://techcrunch.com/2010/10/20/google-display-yaho/'>$2.5 billion</a> a year in display advertising revenues, and Facebook is doing about <a href='http://techcrunch.com/2010/09/01/facebook-will-hit-2-billion-2010-revenue-says-mob-of-unofficial-facebook-spokespersons/'>$2 billion</a>, mostly from display. ";
 		try {
-			BaseExperioExtractor bse = new BaseExperioExtractor();
-			BaseExperio[] exps = bse.extractExperios(phrase);
+			BaseExperio[] exps = BaseExperioExtractor.getInstance().extractExperios(phrase);
 			for(BaseExperio exp: exps) {
 				System.out.println(exp.toString());
 			}

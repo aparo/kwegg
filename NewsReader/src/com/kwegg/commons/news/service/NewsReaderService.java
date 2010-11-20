@@ -78,13 +78,12 @@ public class NewsReaderService {
 			try {
 				syndFeed = syndFeedInput.build(xmlReader);
 				feed.setName(syndFeed.getTitle());
-				feed.setLastModifiedTime(syndFeed.getPublishedDate().getTime());
-				feed.setLastCrawledTime(0l);
 				try {
 					FeedTableHandler.getInstance().saveFeed(feed);
 					id = FeedTableHandler.getInstance().getFeedId(url);
 					feed.setId(id);
 					feed.dumpNews();
+					fdQueue.add(feed);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -128,7 +127,7 @@ public class NewsReaderService {
                 }
                 catch (Exception e)
                 {
-                    System.out.println("Exception in NewsDumperThread-" + e);
+                    System.out.println("Exception in NewsDumperThread- " + e);
                 }
             }
         }

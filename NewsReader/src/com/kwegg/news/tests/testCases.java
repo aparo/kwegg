@@ -18,7 +18,7 @@ public class testCases {
 	public static void addFeedAndStartService() {
 		NewsReaderService service = NewsReaderService.getInstance();
 		try {
-			service.addFeed("http://feedproxy.google.com/TechCrunch");
+			service.addFeed("http://feeds.feedburner.com/ommalik");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

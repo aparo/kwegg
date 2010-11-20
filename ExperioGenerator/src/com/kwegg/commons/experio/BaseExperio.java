@@ -21,7 +21,8 @@ public class BaseExperio {
 		StringBuilder sb = new StringBuilder("");
 		sb.append("{").append("phrase:").append(getPhrase()).append(", subjects:").append("{");
 		for(BaseSubject bs: getSubjects()) {
-			sb.append(bs.getSubjectPhrase()).append(" -- ");
+			sb.append(bs.getSubjectPhrase());
+			sb.append(" -- ");
 		}
 		sb.append("}}");
 		return sb.toString();

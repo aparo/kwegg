@@ -68,7 +68,7 @@ public class NewsTableHandler {
      * @return feeds sorted by time
      */
     public ArrayList<CloudNews> getAllNewsForFeed(FastFeed fd, int from, int to) {
-    	String sql = "SELECT * FROM "+TABLE_NAME+" WHERE feed_id=? LIMIT ?,? ORDER BY publishedTime DESC";
+    	String sql = "SELECT * FROM "+TABLE_NAME+" WHERE feedId=? ORDER BY id DESC LIMIT ?,?";
     	int i=1;
     	ArrayList<CloudNews> acn = new ArrayList<CloudNews>();
     	try {
@@ -88,6 +88,31 @@ public class NewsTableHandler {
     	return acn;
     }
     
+    private ThreadLocal<PreparedStatement> getNewsByIdPsMap = new ThreadLocal<PreparedStatement>();
+    /**
+     * 
+     * @param fd
+     * @param numFeeds
+     * @return feeds sorted by time
+     */
+    public CloudNews getNewsById(int id) {
+    	String sql = "SELECT * FROM "+TABLE_NAME+" WHERE id=?";
+    	int i=1;
+    	CloudNews cn = null;
+    	try {
+			PreparedStatement stmtToGetNews = PSLocalMap.getPS(connection, getNewsByIdPsMap, sql);
+			stmtToGetNews.setInt(i++, id);
+			ResultSet rs = stmtToGetNews.executeQuery();
+			while(rs.next()) {
+				cn = getCloudNewsFromRS(rs);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return cn;
+    }
+    
     /**
      * 
      * @param rs
@@ -98,13 +123,13 @@ public class NewsTableHandler {
     	int id = rs.getInt("id");
     	CloudNews cn = new CloudNews();
     	cn.setId(id);
-    	cn.setFeed_id(rs.getInt("feed_id"));
+    	cn.setFeed_id(rs.getInt("feedId"));
     	cn.setAuthor(rs.getString("author"));
     	cn.setBaseUri(rs.getString("baseUri"));
     	cn.setContent(rs.getString("content"));
     	cn.setFeedLink(rs.getString("feedLink"));
     	cn.setGuidValue(rs.getString("guidValue"));
-    	cn.setPublishTime(rs.getLong("publishTime"));
+    	cn.setPublishTime(rs.getLong("publishedTime"));
     	cn.setTitle(rs.getString("title"));
     	cn.setUpdatedTime(rs.getLong("updatedTime"));
     	

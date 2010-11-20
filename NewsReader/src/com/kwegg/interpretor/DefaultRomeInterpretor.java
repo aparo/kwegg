@@ -33,10 +33,11 @@ public class DefaultRomeInterpretor implements BaseInterpretor {
 			e.printStackTrace();
 		}
 		
-		if(syndFeed.getPublishedDate().getTime() < feed.getLastCrawledTime()) {
-			System.out.println("no need to crawl "+syndFeed.getTitle());
+		if(syndFeed.getPublishedDate().getTime() <= feed.getLastModifiedTime()) {
+			return newsList;
 		}
 			
+		System.out.println("Crawling started for "+feed.getName()+" at "+System.currentTimeMillis());
 		
 		/*
 		 * generate list of news after last modified time
@@ -44,7 +45,6 @@ public class DefaultRomeInterpretor implements BaseInterpretor {
 		Iterator it = syndFeed.getEntries().iterator();
 		while(it.hasNext()) {
 			SyndEntry entry = (SyndEntry) it.next();
-			System.out.println("dumping "+entry.getTitle());
 			CloudNews news = new CloudNews();
 			if(entry.getAuthor()!=null)
 				news.setAuthor(entry.getAuthor());

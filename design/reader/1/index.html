@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:fb="http://www.facebook.com/2008/fbml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="title" content="<?=$title?>" /> 
+    <meta name="description" content="<?=$description?>" /> 
+    <link rel="icon" href="favicon.ico">
+    <title>Reader Display Test Page</title>
+    <link rel="stylesheet" type="text/css" href="screen.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery.dotimeout.min.js"></script>
+  </head>
+<!-- time for some javascript. there is a reason for it to be on top-->		
+<script type="text/javascript">
+  var json='';
+  var timer_check = function(){
+        $("#experios").doTimeout(2000, function(){
+            timer_check();
+            $("#experios").html("<h1>hello</h1>");
+        });
+    };
+  var show_content = function(){
+       $("#content-scroll-handle-2").hide();
+       $("#content-scroll-up").show("slide", { direction: "down" }, 500, function(){
+       });
+    };
+  var hide_content = function(){
+       $("#content-scroll-up").hide("slide", { direction: "down" }, 500, function(){
+         $("#content-scroll-handle-2").show();
+       });
+       
+    }
+$().ready(function(){ 
+    var docHeight = $(document).height();
+    // set initial css
+    var contentHeight = docHeight - 60 - 120 -32;
+    var contentHeight2 = contentHeight - 29;
+    $('#content-scroll-up').css('max-height',contentHeight+'px');
+
+    // to get news pack
+    var url = 'json.html';
+    $.getJSON(url, function(data) {
+      $('#bar_top').html('<h1>' + data.title + '</h1>');
+      $('#content-scrolled').html(data.content);
+    });
+    
+    // to bind events
+    $('#content-scroll-handle-2').click(function() {
+      show_content();
+    });
+    $('#content-scroll-handle').click(function() {
+      hide_content();
+    });
+    // initial settings
+    $("#content-scroll-up").hide();
+});
+</script>
+  <body>
+    <div class="abs" id="bar_top"></div>
+    <div class="abs" id="experios">
+    </div>
+    <div class="abs" id="bar_bottom">
+      <div id="menu">
+        <h3>testing menu for testing what needs to be test</h3>
+      </div>
+      yup of the yups is the yup
+    </div>
+    <div id="content-scroll-up">
+        <div id="content-scroll-handle"> <img src="snips/round-black-down.png"> </div>
+        <div id="content-scrolled"></div>
+    </div>
+    <div class="abs" id="content-scroll-handle-2"><div id="img2-handle"><img src="snips/round-black-up.png"></div></div>
+  </body>
+</html>

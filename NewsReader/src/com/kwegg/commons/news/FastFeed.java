@@ -15,8 +15,8 @@ public class FastFeed {
 	public static final String DEFAULT_SAVE_AS_ENCODING = "utf-8";
 	private int id;
 	private final URL feedURL;
-	private long lastModifiedTime;
-	private long lastCrawledTime;
+	private long lastModifiedTime = 0;
+	private long lastCrawledTime = 0;
 	private boolean isEnabled = true;
 	private String name;
 	
@@ -48,10 +48,12 @@ public class FastFeed {
 		BaseInterpretor bi = new DefaultRomeInterpretor();
 		try {
 			LinkedList<CloudNews> lcn = (LinkedList<CloudNews>) bi.getAllCloudNews(this);
-			for(CloudNews cn: lcn) {
+			Object[] cnArr = lcn.toArray();
+			int length = cnArr.length;
+			for(int inc=1; inc<=length; inc++) {
 				try {
-					NewsTableHandler.getInstance().insertNews(cn);
-					System.out.println("news inserted");
+					CloudNews ns = (CloudNews) cnArr[length-inc];
+					NewsTableHandler.getInstance().insertNews(ns);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

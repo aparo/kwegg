@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/NewsReader"/>
+	<classpathentry kind="src" path="/NewsCommon"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmu_time_awb.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmu_us_kal.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmudict04.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmulex.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmutimelex.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/en_us.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/freetts-jsapi10.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/freetts.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/jsapi.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/mbrola.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/README.txt"/>
+	<classpathentry kind="lib" path="/lib/freetts/speech.properties"/>
+	<classpathentry kind="lib" path="/lib/freetts/voices.txt"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

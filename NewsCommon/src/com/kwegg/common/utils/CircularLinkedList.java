@@ -88,10 +88,12 @@ public class CircularLinkedList<T> {
 		try {
 			lock.lock();
 			if (current != null) {
+				if(current.next.value==null)
+					return current.value;
 				current = current.next;
 				return current.value;
 			}
-			return null;
+			return current.value;
 		} finally {
 			lock.unlock();
 		}
