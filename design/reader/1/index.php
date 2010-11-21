@@ -11,6 +11,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/jquery.dotimeout.min.js"></script>
+    <script src="js/jquery.jplayer.min.js"></script>
   </head>
 <!-- time for some javascript. there is a reason for it to be on top-->		
 <script type="text/javascript">
@@ -18,7 +19,8 @@ $().ready(function(){
     // variables declarations to be required
     var imgList = [];
     var audioList = [];
-    var loaded = 0;
+    var imgLoaded = 0;
+    var audioLoaded = 0;
     var json='';
     var docHeight = $(document).height();
     var docWidth = $(document).width();
@@ -29,10 +31,20 @@ $().ready(function(){
     var contentHeight2 = contentHeight - 29;
     var maxPicWidth = docWidth;
     var maxPicHeight = 200;
+    var audio;
+    var numExperios = <? echo 6; ?>;
+    var currentExperio = 0;
 
     //utilities for content experience
     var timer_check = function(){
-        $("#experios").doTimeout(1000, function(){
+        $("#experios").doTimeout(2000, function(){
+            if(imgLoaded>=numExperios) {
+              if(audio==undefined || audio.currentTime>=audio.duration) {
+                audio = $("#experioAudio-"+currentExperio).get(0);
+                audio.play();
+                currentExperio++;
+              }
+            }
             timer_check();
         });
     };
@@ -56,7 +68,7 @@ $().ready(function(){
           'top': top + 'px'
         };
         $("#expic-"+picc).css(cssObj);
-        //$("#expic-"+picc).hide();
+        $("#expic-"+picc).hide();
       }
     };
     
@@ -86,9 +98,9 @@ $().ready(function(){
 
     // timer utilities to load and play experios
     var start_experio = function() {
-      for(var start_i=0; start_i<6; start_i++) {
-        $('<img>').attr({src: json.newsPack[start_i].imageUrl, id: start_i}).load(function(start_i) {
-            loaded++;
+      for(var start_i=0; start_i<numExperios; start_i++) {
+        $('<img>').attr({src: json.newsPack[start_i].imageUrl, id: 'experioPic-'+start_i}).load(function() {
+            imgLoaded++;
             var pwidth = $(this).attr('width'); 
             var pheight = $(this).attr('height');
             if(pheight > maxPicHeight) {
@@ -102,8 +114,28 @@ $().ready(function(){
             $(this).attr({height: pheight, width: pwidth});
             $('#expic-'+$(this).attr('id')).html($(this));
           });
+        var audElement = $('<audio>').attr({src: 'v'+start_i+'.wav', id: 'experioAudio-'+start_i});
+        $("#exaudio").append(audElement);
       }
+      timer_check();
     };
+
+    //audio controls
+                $("#play-bt").click(function(){
+			audio.play();
+			$("#message").text("Music started");
+		})
+ 
+		$("#pause-bt").click(function(){
+			audio.pause();
+			$("#message").text("Music paused");
+		})
+ 
+		$("#stop-bt").click(function(){
+			audio.pause();
+			audio.currentTime = 0;
+			$("#message").text("Music Stopped");
+		})
 });
 </script>
   <body>
@@ -111,14 +143,18 @@ $().ready(function(){
     <?php
         for($i=0; $i<6; $i++) {
           echo "<div id=\"expic-".$i."\"></div>";
+          echo "<audio id=\"audio-player-".$i."\" name=\"audio-player\" src=\"v".$i.".wav\" ></audio>";
         }
       ?>
-    <div class="abs" id="experios"></div>
+    <div id="exaudio"></div>
+    <div class="abs" id="experios">
+      <div id="message"></div>
+        <a id="play-bt" href="#">Play music</a> | <a id="pause-bt" href="#">Pause music</a> | <a id="stop-bt" href="#">Stop music</a><br/>
+    </div>
     <div class="abs" id="bar_bottom">
       <div id="menu">
         <h3>testing menu for testing what needs to be test</h3>
       </div>
-      yup of the yups is the yup
     </div>
     <div id="content-scroll-up">
         <div id="content-scroll-handle"> <img src="snips/round-black-down.png"> </div>
