@@ -26,5 +26,6 @@ form, input, select, textarea {margin: 0;padding: 0;color: #ffffff;}
 li.audio_play {background: url('snips/control_play.png');}
 li.audio_pause {background: url('snips/control_pause.png');}
 li.audio_stop {background: url('snips/control_stop.png');}
+#play-pause img{position:absolute;top:50%;left:50%;margin-top:-50px;margin-left:-50px;}
 
 

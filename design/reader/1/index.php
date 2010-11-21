@@ -18,7 +18,7 @@
 $().ready(function(){ 
     // variables declarations to be required
     var imgList = [];
-    var audioList = [];
+    var audioList = new Array();
     var imgLoaded = 0;
     var audioLoaded = 0;
     var json='';
@@ -39,13 +39,14 @@ $().ready(function(){
 
     //utilities for content experience
     var timer_check = function(){
-        $("#experios").doTimeout(2000, function(){
+        $("#experios").doTimeout(800, function(){
             if(imgLoaded>=numExperios && currentExperio<numExperios && !isStop && !isPause) {
               if(audio==undefined || audio.currentTime>=audio.duration) {
                 // show phrase
                 $("#exphrase").html(json.newsPack[currentExperio].phrase);
                 // play audio
-                audio = $("#experioAudio-"+currentExperio).get(0);
+                //audio = $("#experioAudio-"+currentExperio).get(0);
+                audio = audioList[currentExperio];
                 audio.play();
                 // show image
                 $("#expic-img-"+currentExperio).show();
@@ -79,6 +80,13 @@ $().ready(function(){
       }
       $("#exphrase").html("");
     };
+    function togglePlay(){
+      var $elem = $('#play-pause').children(':first');
+      $elem.stop().show().animate({'marginTop':'-175px','marginLeft':'-175px','width':'350px','height':'350px','opacity':'0'},function(){
+        $(this).css({'width':'100px','height':'100px','margin-left':'-50px','margin-top':'-50px','opacity':'1','display':'none'});
+        });
+      $elem.parent().append($elem);
+    }
     
     // set initial css
     $('#content-scroll-up').css('max-height',contentHeight+'px');
@@ -123,14 +131,18 @@ $().ready(function(){
             $(this).attr({height: pheight, width: pwidth});
             $('#expic-'+$(this).attr('id')).html($(this));
           });
-        var audElement = $('<audio>').attr({src: 'v'+start_i+'.wav', id: 'experioAudio-'+start_i});
-        $("#exaudio").append(audElement);
+       // var audElement = $('<audio>').attr({src: 'v'+start_i+'.wav', id: 'experioAudio-'+start_i});
+        var audElement = document.createElement('audio');
+        audElement.setAttribute('src', 'v'+start_i+'.wav');
+        audioList[start_i] = audElement;
+        //$("#exaudio").append(audElement);
       }
       timer_check();
     };
 
     //audio controls
     $("#player_play").click(function(){
+      togglePlay();
       if(isPause) {
         audio.play();
       }
@@ -138,15 +150,16 @@ $().ready(function(){
       isPause = false;
       $("#player_play").hide();
       $("#player_pause").show();
-      $("#message").text("Music started");
+      //$("#message").text("Music started");
     })
 
     $("#player_pause").click(function(){
+      togglePlay();
       audio.pause();
       isPause = true;
       $("#player_pause").hide();
       $("#player_play").show();
-      $("#message").text("Music paused");
+      //$("#message").text("Music paused");
     })
 
     $("#player_stop").click(function(){
@@ -159,7 +172,7 @@ $().ready(function(){
       audio = undefined;
       $("#player_pause").hide();
       $("#player_play").show();
-      $("#message").text("Music Stopped");
+      //$("#message").text("Music Stopped");
     })
 });
 </script>
@@ -172,9 +185,12 @@ $().ready(function(){
         }
       ?>
     <div id="exaudio"></div>
+    <div id="play-pause">
+      <img id="play" src="snips/play.png" width="100" height="100" style="display:none;"/>
+      <img id="pause" src="snips/pause.png" width="100" height="100" style="display:none;"/>
+    </div>
     <div class="abs" id="experios">
       <div id="message"></div>
-        <a id="play-bt" href="#">Play music</a> | <a id="pause-bt" href="#">Pause music</a> | <a id="stop-bt" href="#">Stop music</a><br/>
     </div>
     <div class="abs" id="bar_bottom">
       <div id="menu">
