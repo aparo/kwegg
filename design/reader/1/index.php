@@ -80,12 +80,12 @@ $().ready(function(){
       }
       $("#exphrase").html("");
     };
-    function togglePlay(){
-      var $elem = $('#play-pause').children(':first');
+    function togglePlay(elemid){
+      var $elem = $('#'+elemid);
       $elem.stop().show().animate({'marginTop':'-175px','marginLeft':'-175px','width':'350px','height':'350px','opacity':'0'},function(){
         $(this).css({'width':'100px','height':'100px','margin-left':'-50px','margin-top':'-50px','opacity':'1','display':'none'});
         });
-      $elem.parent().append($elem);
+      //$elem.parent().append($elem);
     }
     
     // set initial css
@@ -142,7 +142,7 @@ $().ready(function(){
 
     //audio controls
     $("#player_play").click(function(){
-      togglePlay();
+      togglePlay('play');
       if(isPause) {
         audio.play();
       }
@@ -154,7 +154,7 @@ $().ready(function(){
     })
 
     $("#player_pause").click(function(){
-      togglePlay();
+      togglePlay('pause');
       audio.pause();
       isPause = true;
       $("#player_pause").hide();
