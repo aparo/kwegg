@@ -34,14 +34,21 @@ $().ready(function(){
     var audio;
     var numExperios = <? echo 6; ?>;
     var currentExperio = 0;
+    var isStop = true;
+    var isPause = false;
 
     //utilities for content experience
     var timer_check = function(){
         $("#experios").doTimeout(2000, function(){
-            if(imgLoaded>=numExperios) {
+            if(imgLoaded>=numExperios && currentExperio<numExperios && !isStop && !isPause) {
               if(audio==undefined || audio.currentTime>=audio.duration) {
+                // show phrase
+                $("#exphrase").html(json.newsPack[currentExperio].phrase);
+                // play audio
                 audio = $("#experioAudio-"+currentExperio).get(0);
                 audio.play();
+                // show image
+                $("#expic-img-"+currentExperio).show();
                 currentExperio++;
               }
             }
@@ -67,9 +74,10 @@ $().ready(function(){
           'left': left + 'px',
           'top': top + 'px'
         };
-        $("#expic-"+picc).css(cssObj);
-        $("#expic-"+picc).hide();
+        $("#expic-img-"+picc).css(cssObj);
+        $("#expic-img-"+picc).hide();
       }
+      $("#exphrase").html("");
     };
     
     // set initial css
@@ -81,8 +89,8 @@ $().ready(function(){
     var url = 'json.html';    
     $.getJSON(url, function(data) {
       json = data;
-      $('#bar_top').html('<h1>' + data.title + '</h1>');
-      $('#content-scrolled').html(data.content);
+      $('#bar_top').html('<h1>' + json.title + '</h1>');
+      $('#content-scrolled').html(json.content);
       //setExperiosPosition();
       start_experio();
     });
@@ -95,11 +103,12 @@ $().ready(function(){
     });
     // initial settings
     $("#content-scroll-up").hide();
+    $("#player_pause").hide();
 
     // timer utilities to load and play experios
     var start_experio = function() {
       for(var start_i=0; start_i<numExperios; start_i++) {
-        $('<img>').attr({src: json.newsPack[start_i].imageUrl, id: 'experioPic-'+start_i}).load(function() {
+        $('<img>').attr({src: json.newsPack[start_i].imageUrl, id: 'img-'+start_i}).load(function() {
             imgLoaded++;
             var pwidth = $(this).attr('width'); 
             var pheight = $(this).attr('height');
@@ -121,28 +130,44 @@ $().ready(function(){
     };
 
     //audio controls
-                $("#play-bt").click(function(){
-			audio.play();
-			$("#message").text("Music started");
-		})
- 
-		$("#pause-bt").click(function(){
-			audio.pause();
-			$("#message").text("Music paused");
-		})
- 
-		$("#stop-bt").click(function(){
-			audio.pause();
-			audio.currentTime = 0;
-			$("#message").text("Music Stopped");
-		})
+    $("#player_play").click(function(){
+      if(isPause) {
+        audio.play();
+      }
+      isStop = false;
+      isPause = false;
+      $("#player_play").hide();
+      $("#player_pause").show();
+      $("#message").text("Music started");
+    })
+
+    $("#player_pause").click(function(){
+      audio.pause();
+      isPause = true;
+      $("#player_pause").hide();
+      $("#player_play").show();
+      $("#message").text("Music paused");
+    })
+
+    $("#player_stop").click(function(){
+      isStop = true;
+      isPause = false;
+      currentExperio = 0;
+      setExpicPositions();
+      audio.pause();
+      audio.currentTime = 0;
+      audio = undefined;
+      $("#player_pause").hide();
+      $("#player_play").show();
+      $("#message").text("Music Stopped");
+    })
 });
 </script>
   <body>
     <div class="abs" id="bar_top"></div>
     <?php
         for($i=0; $i<6; $i++) {
-          echo "<div id=\"expic-".$i."\"></div>";
+          echo "<div id=\"expic-img-".$i."\"></div>";
           echo "<audio id=\"audio-player-".$i."\" name=\"audio-player\" src=\"v".$i.".wav\" ></audio>";
         }
       ?>
@@ -153,8 +178,15 @@ $().ready(function(){
     </div>
     <div class="abs" id="bar_bottom">
       <div id="menu">
-        <h3>testing menu for testing what needs to be test</h3>
+        <div id="player-container">
+          <ul id="player-controls">
+            <li id="player_play" class="audio_play">Play</li>
+            <li id="player_pause" class="audio_pause">Pause</li>
+            <li id="player_stop" class="audio_stop">Stop</li>
+          </ul>
+        </div>
       </div>
+      <div class="phrase" id="exphrase"></div>
     </div>
     <div id="content-scroll-up">
         <div id="content-scroll-handle"> <img src="snips/round-black-down.png"> </div>

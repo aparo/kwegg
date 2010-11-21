@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.json.JSONException;
 
-import com.kwegg.common.utils.HtmlManipulator;
 import com.kwegg.commons.experio.BaseExperio;
 import com.kwegg.commons.news.CloudNews;
 import com.kwegg.commons.pack.CloudNewsExperioPack;
