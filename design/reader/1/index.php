@@ -39,7 +39,7 @@ $().ready(function(){
 
     //utilities for content experience
     var timer_check = function(){
-        $("#experios").doTimeout(800, function(){
+        $("#experios").doTimeout(1200, function(){
             if(imgLoaded>=numExperios && currentExperio<numExperios && !isStop && !isPause) {
               if(audio==undefined || audio.currentTime>=audio.duration) {
                 // show phrase
@@ -150,7 +150,6 @@ $().ready(function(){
       isPause = false;
       $("#player_play").hide();
       $("#player_pause").show();
-      //$("#message").text("Music started");
     })
 
     $("#player_pause").click(function(){
@@ -159,7 +158,6 @@ $().ready(function(){
       isPause = true;
       $("#player_pause").hide();
       $("#player_play").show();
-      //$("#message").text("Music paused");
     })
 
     $("#player_stop").click(function(){
@@ -172,7 +170,6 @@ $().ready(function(){
       audio = undefined;
       $("#player_pause").hide();
       $("#player_play").show();
-      //$("#message").text("Music Stopped");
     })
 });
 </script>

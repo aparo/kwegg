@@ -61,6 +61,49 @@ public class BaseExperioExtractor {
 		return be;
 	}
 	
+	/*
+	 * first experio is of title
+	 */
+	public final BaseExperio[] extractExperios(String newsTitle, String newsContent) {
+		String cont = new String(newsContent);
+		String title = new String(newsTitle);
+		cont.replaceAll("\n", "").replaceAll("\t", "");
+		title.replaceAll("\n", "").replaceAll("\t", "");
+		String htmlEscaped = HtmlManipulator.textizeHtml(cont);
+		String htmlEscapedTitle = HtmlManipulator.textizeHtml(title);
+		String[] phrases = sdetector.sentDetect(htmlEscaped);
+		BaseExperio[] be = new BaseExperio[phrases.length + 1];
+		int bei = 0;
+		for(int i=0; i<phrases.length+1; i++) {
+			ArrayList<BaseSubject> subjs = new ArrayList<BaseSubject>();
+			String phrase;
+			Parse[] parses;
+			if(i>=1)
+				phrase = phrases[i-1];
+			else
+				phrase = title;
+			parses = TreebankParser.parseLine(new String(phrase), parser, 1);
+			//parses[0].show();
+			handleParse(parses[0], subjs);
+			/**
+			 * arraylist to array
+			 * bloody hell, do something after trying logic works
+			 */
+			BaseSubject[] bss = new BaseSubject[subjs.size()];
+			for(int ind=0; ind<bss.length; ind++) {
+				bss[ind] = subjs.get(ind);
+			}
+			
+			BaseExperio exp = new BaseExperio(phrase, bss);
+			be[bei++] = exp;
+		};
+		return be;
+	}
+	
+	public final void extractCloudNewsExperioPack(String title, String content) {
+		
+	}
+	
 	public void handleParse(Parse phrases, ArrayList<BaseSubject> subjs) {
 		boolean validSubject = false;
 		String phrase = phrases.toString();

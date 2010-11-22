@@ -6,7 +6,7 @@ import org.json.JSONException;
 
 import com.kwegg.commons.experio.BaseExperio;
 import com.kwegg.commons.news.CloudNews;
-import com.kwegg.commons.pack.CloudNewsExperioPack;
+import com.kwegg.commons.pack.CoreBareExperioPck;
 import com.kwegg.extractor.BaseExperioExtractor;
 import com.kwegg.models.NewsTableHandler;
 
@@ -18,7 +18,7 @@ public class PackTest {
 		
 		try {
 			BaseExperio[] experios = BaseExperioExtractor.getInstance().extractExperios(content);
-			CloudNewsExperioPack pack = new CloudNewsExperioPack(cn);
+			CoreBareExperioPck pack = new CoreBareExperioPck(cn);
 			pack.createPack(experios);
 			System.out.println(pack.toPublish());
 		} catch (IOException e) {

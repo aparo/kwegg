@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 
 import com.kwegg.common.db.PSLocalMap;
 import com.kwegg.common.db.SimpleTableHandler;
-import com.kwegg.commons.pack.CloudNewsExperioPack;
+import com.kwegg.commons.pack.CoreBareExperioPck;
 
 public class ExperiosTableHandler {
 	
@@ -26,7 +26,7 @@ public class ExperiosTableHandler {
     	return instance;
     }
     private ThreadLocal<PreparedStatement> insertCloudNewsMap = new ThreadLocal<PreparedStatement>();
-    public void insertCloudNewsPack(CloudNewsExperioPack pack) {
+    public void insertCloudNewsPack(CoreBareExperioPck pack) {
     	String sql = "INSERT INTO "+TABLE_NAME+" (newsId, json, update_time, feedId) VALUES (?,?,?,?)";
     	int i=1;
     	try {
