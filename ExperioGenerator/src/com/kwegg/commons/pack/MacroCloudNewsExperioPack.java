@@ -15,6 +15,8 @@ import com.googleapis.ajax.services.GoogleSearchQuery;
 import com.googleapis.ajax.services.GoogleSearchQueryFactory;
 import com.googleapis.ajax.services.ImageSearchQuery;
 import com.googleapis.ajax.services.enumeration.ImageSize;
+import com.googleapis.ajax.services.enumeration.ResultSetSize;
+import com.kwegg.common.utils.HtmlManipulator;
 import com.kwegg.common.utils.Utils;
 import com.kwegg.commons.experio.BaseExperio;
 import com.kwegg.commons.experio.BaseSubject;
@@ -68,6 +70,7 @@ public class MacroCloudNewsExperioPack {
 		int resultsNum=0;
 		
 		for(int keyi = 0; keyi<keywords.length; keyi++) {
+			System.out.println(keywords[keyi]);
 			GoogleSearchQueryFactory factory = GoogleSearchQueryFactory.newInstance("applicationKey");
 			ImageSearchQuery query = factory.newImageSearchQuery();
 			query.withImageSize(ImageSize.MEDIUM);
@@ -75,7 +78,8 @@ public class MacroCloudNewsExperioPack {
 			if(keyi==0) {
 				sbQuery.append(keywords[keyi]);
 				GoogleSearchQuery<ImageResult> response = query.withQuery(sbQuery.toString());
-				
+				query.withResultSetSize(ResultSetSize.LARGE);
+				System.out.println("size: "+response.list().size());
 				try {
 					while(response.list().get(p)!=null) {
 						ImageResult resp = response.list().get(0);
@@ -83,7 +87,7 @@ public class MacroCloudNewsExperioPack {
 							imageGuid.add(resp.getImageId());
 							FastCloudImage fastImage = new FastCloudImage(resp.getUrl(), resp.getTitle(), resp.getVisibleUrl());
 							fastImgResults[resultsNum++] = fastImage;
-							continue;
+							break;
 						}
 						else {
 							p++;
@@ -99,6 +103,8 @@ public class MacroCloudNewsExperioPack {
 			else if(keyi==1) {
 				sbQuery.append("+").append(keywords[keyi]);
 				GoogleSearchQuery<ImageResult> response = query.withQuery(sbQuery.toString());
+				query.withResultSetSize(ResultSetSize.LARGE);
+				System.out.println("size: "+response.list().size());
 				try {
 					while(response.list().get(p)!=null) {
 						ImageResult resp = response.list().get(0);
@@ -106,7 +112,7 @@ public class MacroCloudNewsExperioPack {
 							imageGuid.add(resp.getImageId());
 							FastCloudImage fastImage = new FastCloudImage(resp.getUrl(), resp.getTitle(), resp.getVisibleUrl());
 							fastImgResults[resultsNum++] = fastImage;
-							continue;
+							break;
 						}
 						else {
 							p++;
@@ -122,6 +128,8 @@ public class MacroCloudNewsExperioPack {
 			else if(keyi==2) {
 				sbQuery.append("+").append(keywords[keyi]);
 				GoogleSearchQuery<ImageResult> response = query.withQuery(sbQuery.toString());
+				query.withResultSetSize(ResultSetSize.LARGE);
+				System.out.println("size: "+response.list().size());
 				try {
 					while(response.list().get(p)!=null) {
 						ImageResult resp = response.list().get(0);
@@ -129,7 +137,7 @@ public class MacroCloudNewsExperioPack {
 							imageGuid.add(resp.getImageId());
 							FastCloudImage fastImage = new FastCloudImage(resp.getUrl(), resp.getTitle(), resp.getVisibleUrl());
 							fastImgResults[resultsNum++] = fastImage;
-							continue;
+							break;
 						}
 						else {
 							p++;
@@ -145,19 +153,25 @@ public class MacroCloudNewsExperioPack {
 			else {
 				sbQuery.append("+").append(keywords[keyi]);
 				GoogleSearchQuery<ImageResult> response = query.withQuery(sbQuery.toString());
-				for(ImageResult res: response.list()) {
-					if(res!=null&&!Utils.ifArrayContains(imageGuid, res.getImageId())) {
-						imageGuid.add(res.getImageId());
-						FastCloudImage fastImage = new FastCloudImage(res.getUrl(), res.getTitle(), res.getVisibleUrl());
-						fastImgResults[resultsNum++] = fastImage;
+				query.withResultSetSize(ResultSetSize.LARGE);
+				System.out.println("size: "+response.list().size());
+				
+				try {
+					for(ImageResult res: response.list()) {
+						if(res!=null&&!Utils.ifArrayContains(imageGuid, res.getImageId())) {
+							imageGuid.add(res.getImageId());
+							FastCloudImage fastImage = new FastCloudImage(res.getUrl(), res.getTitle(), res.getVisibleUrl());
+							fastImgResults[resultsNum++] = fastImage;
+							if(resultsNum>=fastImgResults.length) {
+								break;
+							}
+						}
 					}
 				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
-		}
-		
-		
-		for(int i=0; i<fastImgResults.length; i++) {
-			System.out.println(fastImgResults[i].toString());
 		}
 	}
 	
@@ -224,7 +238,7 @@ public class MacroCloudNewsExperioPack {
 		private String source;
 		public FastCloudImage(String url, String title, String source) {
 			this.url = url;
-			this.title = title;
+			this.title = HtmlManipulator.replaceHtmlEntities(title.replaceAll("\\<.*?>",""));;
 			this.source = source;
 		}
 		public JSONObject toJson() throws JSONException {
@@ -263,11 +277,15 @@ public class MacroCloudNewsExperioPack {
 	}
 	
 	public static void main(String[] args) {
-		CloudNews cn = NewsTableHandler.getInstance().getNewsById(14);
+		CloudNews cn = NewsTableHandler.getInstance().getNewsById(7);
 		
 		try {
 			MacroCloudNewsExperioPack pack = new MacroCloudNewsExperioPack(cn);
+			System.out.println(pack.toPublish());
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
