@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.googleapis.ajax.schema.ImageResult;
 import com.googleapis.ajax.services.GoogleSearchQuery;
 import com.googleapis.ajax.services.GoogleSearchQueryFactory;
@@ -23,7 +27,8 @@ public class MacroCloudNewsExperioPack {
 	private HashMap<String, Integer> numberOfKeywordsMap = new HashMap<String, Integer>();
 	//array sorted in increasing order
 	private String[] keywords = {null,null,null,null};
-	private ImageResult[] imgResults = {null,null,null,null,null,null,null};
+	private FastCloudImage[] fastImgResults = {null,null,null,null,null,null,null};
+	private ArrayList<PhrasePack> phrasePack = new ArrayList<PhrasePack>();
 	ArrayList<String> imageGuid = new ArrayList<String>();
 	
 	public MacroCloudNewsExperioPack(CloudNews news) throws IOException {
@@ -66,41 +71,93 @@ public class MacroCloudNewsExperioPack {
 			GoogleSearchQueryFactory factory = GoogleSearchQueryFactory.newInstance("applicationKey");
 			ImageSearchQuery query = factory.newImageSearchQuery();
 			query.withImageSize(ImageSize.MEDIUM);
+			int p=0;
 			if(keyi==0) {
 				sbQuery.append(keywords[keyi]);
 				GoogleSearchQuery<ImageResult> response = query.withQuery(sbQuery.toString());
-				int p=0;
-				if(response.list().get(0)!=null)
-					imgResults[resultsNum++] = response.list().get(0);
 				
-				/*if(!Utils.ifArrayContains(imageGuid, ir.getImageId())) {
-					imageGuid.add(ir.getImageId());
-					return ir;
-				}*/
+				try {
+					while(response.list().get(p)!=null) {
+						ImageResult resp = response.list().get(0);
+						if(!Utils.ifArrayContains(imageGuid, resp.getImageId())) {
+							imageGuid.add(resp.getImageId());
+							FastCloudImage fastImage = new FastCloudImage(resp.getUrl(), resp.getTitle(), resp.getVisibleUrl());
+							fastImgResults[resultsNum++] = fastImage;
+							continue;
+						}
+						else {
+							p++;
+						}
+						
+					}
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					continue;
+				}
 			}
 			else if(keyi==1) {
 				sbQuery.append("+").append(keywords[keyi]);
 				GoogleSearchQuery<ImageResult> response = query.withQuery(sbQuery.toString());
-				if(response.list().get(0)!=null)
-					imgResults[resultsNum++] = response.list().get(0);
+				try {
+					while(response.list().get(p)!=null) {
+						ImageResult resp = response.list().get(0);
+						if(!Utils.ifArrayContains(imageGuid, resp.getImageId())) {
+							imageGuid.add(resp.getImageId());
+							FastCloudImage fastImage = new FastCloudImage(resp.getUrl(), resp.getTitle(), resp.getVisibleUrl());
+							fastImgResults[resultsNum++] = fastImage;
+							continue;
+						}
+						else {
+							p++;
+						}
+						
+					}
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					continue;
+				}
 			}
 			else if(keyi==2) {
 				sbQuery.append("+").append(keywords[keyi]);
 				GoogleSearchQuery<ImageResult> response = query.withQuery(sbQuery.toString());
-				if(response.list().get(0)!=null)
-					imgResults[resultsNum++] = response.list().get(0);
+				try {
+					while(response.list().get(p)!=null) {
+						ImageResult resp = response.list().get(0);
+						if(!Utils.ifArrayContains(imageGuid, resp.getImageId())) {
+							imageGuid.add(resp.getImageId());
+							FastCloudImage fastImage = new FastCloudImage(resp.getUrl(), resp.getTitle(), resp.getVisibleUrl());
+							fastImgResults[resultsNum++] = fastImage;
+							continue;
+						}
+						else {
+							p++;
+						}
+						
+					}
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+					continue;
+				}
 			}
 			else {
 				sbQuery.append("+").append(keywords[keyi]);
 				GoogleSearchQuery<ImageResult> response = query.withQuery(sbQuery.toString());
 				for(ImageResult res: response.list()) {
-					if(res!=null)
-						imgResults[resultsNum++] = res;
+					if(res!=null&&!Utils.ifArrayContains(imageGuid, res.getImageId())) {
+						imageGuid.add(res.getImageId());
+						FastCloudImage fastImage = new FastCloudImage(res.getUrl(), res.getTitle(), res.getVisibleUrl());
+						fastImgResults[resultsNum++] = fastImage;
+					}
 				}
 			}
 		}
-		for(int i=0; i<imgResults.length; i++) {
-			System.out.println(imgResults[i].getUnescapedUrl() + " - " + imgResults[i].getTitle() + " - " + imgResults[i].getOriginalContextUrl());
+		
+		
+		for(int i=0; i<fastImgResults.length; i++) {
+			System.out.println(fastImgResults[i].toString());
 		}
 	}
 	
@@ -124,6 +181,84 @@ public class MacroCloudNewsExperioPack {
 				keywords[i] = key;
 				return;
 			}
+		}
+	}
+	
+	/**
+	 * for macro, return title, publishDate, author, content, pic-array, audio dir, phrase-Pack (phrase-audio)
+	 * @return
+	 * @throws JSONException 
+	 */
+	public String toPublish() throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put("title", news.getTitle());
+		json.put("author", news.getAuthor());
+		json.put("publishedDate", news.getPublishTime());
+		json.put("content", news.getContent());
+		
+		JSONArray tags = new JSONArray();
+		for(String key: keywords) {
+			tags.put(key);
+		}
+		
+		JSONArray packArray = new JSONArray();
+		for(PhrasePack p: phrasePack) {
+			packArray.put(p.toJson());
+		}
+		
+		JSONArray images = new JSONArray();
+		for(FastCloudImage img: fastImgResults) {
+			images.put(img.toJson());
+		}
+		
+		json.put("tags", tags);
+		json.put("newsPack", packArray);
+		json.put("images", images);
+		
+		return json.toString();
+	}
+	
+	private class FastCloudImage {
+		private String url;
+		private String title;
+		private String source;
+		public FastCloudImage(String url, String title, String source) {
+			this.url = url;
+			this.title = title;
+			this.source = source;
+		}
+		public JSONObject toJson() throws JSONException {
+			JSONObject obj = new JSONObject();
+			obj.put("url", url);
+			obj.put("title", title);
+			obj.put("source", source);
+			return obj;
+		}
+	}
+	
+	private class PhrasePack {
+		private String phrase;
+		// audioFile name without extension. .wav/.ogg etc.
+		private String audioFile;
+		
+		public PhrasePack(String phrase, String audioFile) {
+			this.phrase = phrase;
+			this.audioFile = audioFile;
+		}
+
+		public String getPhrase() {
+			return phrase;
+		}
+
+		public String getAudioFile() {
+			return audioFile;
+		}
+		
+		public JSONObject toJson() throws JSONException {
+			JSONObject obj = new JSONObject();
+			obj.put("phrase", phrase);
+			obj.put("audioFile", audioFile);
+			return obj;
 		}
 	}
 	
