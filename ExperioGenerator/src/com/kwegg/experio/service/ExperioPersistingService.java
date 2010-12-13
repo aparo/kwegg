@@ -1,4 +1,4 @@
-package com.kwegg.commons.news.service;
+package com.kwegg.experio.service;
 
 import java.io.IOException;
 import java.net.URL;
@@ -6,53 +6,31 @@ import java.net.URL;
 import com.kwegg.common.utils.CircularLinkedList;
 import com.kwegg.commons.news.FastFeed;
 import com.kwegg.models.FeedTableHandler;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
 
 /**
- * ReaderService is
- * - Thread Safe, Application Restart Safe, Will handle all feeds and start thread/s for dumping news to db
+ * ExperioPersistingService is
+ * - Thread Safe, Application Restart Safe, Will handle all feeds and start thread/s for dumping experio to db
+ * handles adding of new feeds
  * @author parag
  *
  */
-public class NewsReaderService {
+public class ExperioPersistingService {
 	private static int THREAD_SLEEP_TIMEOUT = 1000;
 	public volatile boolean isStop = true;
-	private NewsDumperThread newsDumperThread;
-	private static NewsReaderService instance;
+	private ExperioDumperThread experioDumperThread;
+	private static ExperioPersistingService instance;
 	
 	private CircularLinkedList<FastFeed> fdQueue = new CircularLinkedList<FastFeed>();
 	
-	private NewsReaderService() {
-		newsDumperThread = new NewsDumperThread();
-		grabAllFeeds();
+	private ExperioPersistingService() {
+		experioDumperThread = new ExperioDumperThread();
 	}
 	
-	public static NewsReaderService getInstance() {
+	public static ExperioPersistingService getInstance() {
 		if(null==instance) {
-			instance = new NewsReaderService();
+			instance = new ExperioPersistingService();
 		}
 		return instance;
-	}
-	
-	public void onStop() {
-		isStop = true;
-		newsDumperThread.doStop();
-	}
-	
-	public void onStart() {
-		isStop = false;
-		newsDumperThread.doStart();
-	}
-	
-	public void pauseNewsDumping() {
-		newsDumperThread.pause();
-	}
-	
-	public void resumeNewsDumping() {
-		newsDumperThread.unPause();
 	}
 	
 	/**
@@ -75,35 +53,14 @@ public class NewsReaderService {
 		int id = FeedTableHandler.getInstance().getFeedId(url);
 		if(id==0)
 		{
-			SyndFeedInput syndFeedInput = new SyndFeedInput();
-			SyndFeed syndFeed = null;
-			XmlReader xmlReader = new XmlReader(feed.getURL());
-			try {
-				syndFeed = syndFeedInput.build(xmlReader);
-				feed.setName(syndFeed.getTitle());
-				try {
-					FeedTableHandler.getInstance().saveFeed(feed);
-					id = FeedTableHandler.getInstance().getFeedId(url);
-					feed.setId(id);
-					feed.dumpNews();
-					fdQueue.add(feed);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FeedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 		}
 		
 		return id;
 	}
 	
-	private class NewsDumperThread extends Thread{
+	
+	private class ExperioDumperThread extends Thread{
 		private volatile boolean isStop = false;
 		private volatile boolean paused = false;
 		

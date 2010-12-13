@@ -13,7 +13,7 @@ import com.kwegg.commons.experio.BaseSubject;
 import com.kwegg.commons.news.CloudNews;
 import com.kwegg.extractor.BaseExperioExtractor;
 import com.kwegg.models.NewsTableHandler;
-
+@Deprecated
 public class CloudNewsExperioPack {
 	private CloudNews news;
 	private CloudExperiencePack[] pack;

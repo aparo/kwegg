@@ -76,7 +76,6 @@ public class FeedTableHandler {
 			stmtToUpdateFeed.setLong(i++, fd.getLastCrawledTime());
 			stmtToUpdateFeed.setInt(i++, fd.isEnabled()?1:0);
 			stmtToUpdateFeed.setInt(i++, fd.getId());
-			System.out.println(stmtToUpdateFeed.toString());
 			if(null==stmtToUpdateFeed) 
 				throw new Exception("no PS found");
 			

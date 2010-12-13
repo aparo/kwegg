@@ -87,6 +87,26 @@ public class NewsTableHandler {
 		}
     	return acn;
     }
+    private ThreadLocal<PreparedStatement> getAllNotConvertedNewsForFeedPsMap = new ThreadLocal<PreparedStatement>();
+    public ArrayList<CloudNews> getAllNotConvertedNewsForFeed(FastFeed fd) {
+    	String sql = "SELECT * FROM "+TABLE_NAME+" WHERE feedId=? AND  isConverted=?";
+    	int i=1;
+    	ArrayList<CloudNews> acn = new ArrayList<CloudNews>();
+    	try {
+			PreparedStatement stmtToGetNews = PSLocalMap.getPS(connection, getAllNotConvertedNewsForFeedPsMap, sql);
+			stmtToGetNews.setInt(i++, fd.getId());
+			stmtToGetNews.setInt(i++, 0);
+			ResultSet rs = stmtToGetNews.executeQuery();
+			while(rs.next()) {
+				CloudNews cn = getCloudNewsFromRS(rs);
+				acn.add(cn);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return acn;
+    }
     
     private ThreadLocal<PreparedStatement> getNewsByIdPsMap = new ThreadLocal<PreparedStatement>();
     /**
@@ -111,6 +131,53 @@ public class NewsTableHandler {
 			e.printStackTrace();
 		}
     	return cn;
+    }
+    
+    private ThreadLocal<PreparedStatement> getNewsByGuidPsMap = new ThreadLocal<PreparedStatement>();
+    /**
+     * 
+     * @param fd
+     * @param numFeeds
+     * @return feeds sorted by time
+     */
+    public CloudNews getNewsByGuid(String guidValue) {
+    	String sql = "SELECT * FROM "+TABLE_NAME+" WHERE guidValue=?";
+    	int i=1;
+    	CloudNews cn = null;
+    	try {
+			PreparedStatement stmtToGetNews = PSLocalMap.getPS(connection, getNewsByGuidPsMap, sql);
+			stmtToGetNews.setString(i++, guidValue);
+			ResultSet rs = stmtToGetNews.executeQuery();
+			while(rs.next()) {
+				cn = getCloudNewsFromRS(rs);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return cn;
+    }
+    
+    private ThreadLocal<PreparedStatement> updateConvertedNewsPsMap = new ThreadLocal<PreparedStatement>();
+    /**
+     * update single news when it gets converted to experio
+     * @param ns
+     * @throws Exception 
+     */
+    public void updateNewsToConverted(CloudNews ns) throws Exception {
+    	String sql = "UPDATE "+TABLE_NAME+" SET isConverted=? WHERE id=?";
+    	int i=1;
+    	try {
+			PreparedStatement stmtToUpdateNews = PSLocalMap.getPS(connection, updateConvertedNewsPsMap, sql);
+			stmtToUpdateNews.setInt(i++, 1);
+			stmtToUpdateNews.setInt(i++, ns.getId());
+			if(null==stmtToUpdateNews)
+				throw new Exception("no PS found");
+			stmtToUpdateNews.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     /**

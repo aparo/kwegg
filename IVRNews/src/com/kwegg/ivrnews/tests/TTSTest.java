@@ -1,12 +1,9 @@
 package com.kwegg.ivrnews.tests;
 
 import java.beans.PropertyVetoException;
-import java.lang.reflect.Type;
 
 import com.sun.speech.freetts.Voice;
 import com.sun.speech.freetts.VoiceManager;
-import com.sun.speech.freetts.audio.MultiFileAudioPlayer;
-import com.sun.speech.freetts.audio.SingleFileAudioPlayer;
 
 
 public class TTSTest {
@@ -32,13 +29,14 @@ public class TTSTest {
 		/* The VoiceManager manages all the voices for FreeTTS.
          */
         VoiceManager voiceManager = VoiceManager.getInstance();
-        String voiceName = "mbrola_us3";
+        String voiceName = "mbrola_us2";
         Voice helloVoice = voiceManager.getVoice(voiceName);
         Voice[] all = voiceManager.getVoices();
         for(Voice a:all) {
         	System.out.println(a.getName()+"-"+a.getDescription());
         }
-
+        helloVoice.setRate(120f);
+        helloVoice.setRunTitle("test");
         if (helloVoice == null) {
             System.err.println(
                 "Cannot find a voice named "

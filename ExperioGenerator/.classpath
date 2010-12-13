@@ -8,5 +8,19 @@
 	<classpathentry kind="lib" path="/lib/google/google-ajax-apis.jar"/>
 	<classpathentry kind="lib" path="/lib/google/gson-1.4.jar"/>
 	<classpathentry kind="lib" path="/lib/json.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmu_time_awb.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmu_us_kal.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmudict04.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmulex.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/cmutimelex.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/en_us.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/freetts-jsapi10.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/freetts.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/jsapi.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/jsapi.sh"/>
+	<classpathentry kind="lib" path="/lib/freetts/mbrola.jar"/>
+	<classpathentry kind="lib" path="/lib/freetts/README.txt"/>
+	<classpathentry kind="lib" path="/lib/freetts/speech.properties"/>
+	<classpathentry kind="lib" path="/lib/freetts/voices.txt"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

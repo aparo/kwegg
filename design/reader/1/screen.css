@@ -13,7 +13,7 @@ form, input, select, textarea {margin: 0;padding: 0;color: #ffffff;}
 
 #menu{bottom:0; width:100%; height:28px; background:#333 url(snips/gradient-dark.png);}
 
-#experios{top:51px; width:100%;color:#eee; background:#000; overflow: hidden;}
+#experios{top:51px; width:500px;color:#eee; background:#000; overflow: hidden;}
 
 #content-scroll-up{position: absolute; top:60px;bottom:120px; left:0px; right:0px; width:100%; background:#000;}
 #content-scroll-handle{position: relative;top:0px;text-align:center; filter: alpha(opacity=80);opacity: 0.8; background:#000;}
@@ -28,4 +28,5 @@ li.audio_pause {background: url('snips/control_pause.png');}
 li.audio_stop {background: url('snips/control_stop.png');}
 #play-pause img{position:absolute;top:50%;left:50%;margin-top:-50px;margin-left:-50px;}
 
+.experio-pic {overflow:hidden;}
 

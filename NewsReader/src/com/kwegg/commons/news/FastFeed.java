@@ -53,7 +53,8 @@ public class FastFeed {
 			for(int inc=1; inc<=length; inc++) {
 				try {
 					CloudNews ns = (CloudNews) cnArr[length-inc];
-					NewsTableHandler.getInstance().insertNews(ns);
+					if(NewsTableHandler.getInstance().getNewsByGuid(ns.getGuidValue())==null)
+						NewsTableHandler.getInstance().insertNews(ns);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

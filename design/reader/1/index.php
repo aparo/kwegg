@@ -34,16 +34,17 @@ $().ready(function(){
     var audio;
     var numExperios = <? echo 6; ?>;
     var currentExperio = 0;
-    var isStop = true;
+    var isStop = false;
     var isPause = false;
 
     //utilities for content experience
     var timer_check = function(){
         $("#experios").doTimeout(1200, function(){
-            if(imgLoaded>=numExperios && currentExperio<numExperios && !isStop && !isPause) {
+            //if(imgLoaded>=numExperios && currentExperio<numExperios && !isStop && !isPause) {
+            if(currentExperio<numExperios && !isStop && !isPause) {
               if(audio==undefined || audio.currentTime>=audio.duration) {
                 // show phrase
-                $("#exphrase").html(json.newsPack[currentExperio].phrase);
+                $("#exphrase").html(json.phrases[currentExperio]);
                 // play audio
                 //audio = $("#experioAudio-"+currentExperio).get(0);
                 audio = audioList[currentExperio];
@@ -116,7 +117,7 @@ $().ready(function(){
     // timer utilities to load and play experios
     var start_experio = function() {
       for(var start_i=0; start_i<numExperios; start_i++) {
-        $('<img>').attr({src: json.newsPack[start_i].imageUrl, id: 'img-'+start_i}).load(function() {
+        $('<img>').attr({src: json.images[start_i].url, id: 'img-'+start_i}).load(function() {
             imgLoaded++;
             var pwidth = $(this).attr('width'); 
             var pheight = $(this).attr('height');
@@ -131,11 +132,11 @@ $().ready(function(){
             $(this).attr({height: pheight, width: pwidth});
             $('#expic-'+$(this).attr('id')).html($(this));
           });
-       // var audElement = $('<audio>').attr({src: 'v'+start_i+'.wav', id: 'experioAudio-'+start_i});
+        var audioUrl = json.audioUrl;
         var audElement = document.createElement('audio');
-        audElement.setAttribute('src', 'v'+start_i+'.wav');
+        audElement.setAttribute('src', audioUrl+'/v'+start_i+'.wav');
+        audElement.load();
         audioList[start_i] = audElement;
-        //$("#exaudio").append(audElement);
       }
       timer_check();
     };
@@ -177,8 +178,7 @@ $().ready(function(){
     <div class="abs" id="bar_top"></div>
     <?php
         for($i=0; $i<6; $i++) {
-          echo "<div id=\"expic-img-".$i."\"></div>";
-          echo "<audio id=\"audio-player-".$i."\" name=\"audio-player\" src=\"v".$i.".wav\" ></audio>";
+          echo "<div class=experio-pic id=\"expic-img-".$i."\"></div>";
         }
       ?>
     <div id="exaudio"></div>
